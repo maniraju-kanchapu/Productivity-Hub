@@ -3,7 +3,6 @@ import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
 import {
   Alert,
-  FlatList,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -23,6 +22,59 @@ const HABIT_COLORS = [
   '#39FF7E', '#60A5FA', '#F9A8D4', '#A78BFA',
   '#FDBA74', '#34D399', '#F87171', '#FCD34D',
 ];
+
+function SectionHeader({ title, action, onAction }: { title: string; action?: string; onAction?: () => void }) {
+  const colors = useColors();
+  return (
+    <View style={styles.sectionHeader}>
+      <Text style={[styles.sectionTitle, { color: colors.textMuted }]}>{title}</Text>
+      {action && onAction && (
+        <TouchableOpacity onPress={onAction} activeOpacity={0.7} style={styles.sectionAction}>
+          <Feather name="plus" size={14} color={colors.primary} />
+          <Text style={[styles.sectionActionText, { color: colors.primary }]}>{action}</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+}
+
+interface SettingsRowProps {
+  icon: string;
+  iconColor?: string;
+  label: string;
+  value?: string;
+  onPress?: () => void;
+  rightContent?: React.ReactNode;
+  isLast?: boolean;
+}
+
+function SettingsRow({ icon, iconColor, label, value, onPress, rightContent, isLast }: SettingsRowProps) {
+  const colors = useColors();
+  const inner = (
+    <View style={[styles.settingsRow, !isLast && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border }]}>
+      <View style={[styles.settingsIcon, { backgroundColor: (iconColor ?? colors.primary) + '1A' }]}>
+        <Feather name={icon as any} size={15} color={iconColor ?? colors.primary} />
+      </View>
+      <Text style={[styles.settingsLabel, { color: colors.text }]}>{label}</Text>
+      {rightContent ?? (
+        value ? (
+          <Text style={[styles.settingsValue, { color: colors.textMuted }]}>{value}</Text>
+        ) : null
+      )}
+      {onPress && !rightContent && (
+        <Feather name="chevron-right" size={14} color={colors.textMuted} style={{ marginLeft: 4 }} />
+      )}
+    </View>
+  );
+  if (onPress) {
+    return (
+      <TouchableOpacity onPress={onPress} activeOpacity={0.7} hitSlop={{ top: 2, bottom: 2 }}>
+        {inner}
+      </TouchableOpacity>
+    );
+  }
+  return inner;
+}
 
 interface HabitModalProps {
   visible: boolean;
@@ -55,36 +107,49 @@ function HabitModal({ visible, habit, onClose }: HabitModalProps) {
       >
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
         <View style={[styles.modalSheet, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}>
+          <View style={styles.modalHandle} />
           <Text style={[styles.modalTitle, { color: colors.text }]}>
             {habit ? 'Edit Habit' : 'New Habit'}
           </Text>
+          <Text style={[styles.fieldLabel, { color: colors.textMuted }]}>NAME</Text>
           <TextInput
             style={[styles.input, { color: colors.text, backgroundColor: colors.inputBg, borderColor: colors.border }]}
-            placeholder="Habit name..."
+            placeholder="e.g. Morning run, Read 20 pages..."
             placeholderTextColor={colors.textMuted}
             value={name}
             onChangeText={setName}
             autoFocus
+            returnKeyType="done"
+            onSubmitEditing={handleSave}
           />
-          <Text style={[styles.colorLabel, { color: colors.textMuted }]}>COLOR</Text>
+          <Text style={[styles.fieldLabel, { color: colors.textMuted }]}>COLOR</Text>
           <View style={styles.colorRow}>
             {HABIT_COLORS.map(c => (
               <TouchableOpacity
                 key={c}
                 onPress={() => setColor(c)}
-                style={[
-                  styles.colorDot,
-                  { backgroundColor: c },
-                  color === c && styles.colorDotSelected,
-                ]}
                 activeOpacity={0.8}
-              />
+                style={styles.colorDotWrap}
+              >
+                <View
+                  style={[
+                    styles.colorDot,
+                    { backgroundColor: c },
+                    color === c && { transform: [{ scale: 1.2 }] },
+                  ]}
+                />
+                {color === c && (
+                  <View style={styles.colorCheck}>
+                    <Feather name="check" size={9} color="#fff" />
+                  </View>
+                )}
+              </TouchableOpacity>
             ))}
           </View>
           <TouchableOpacity
             onPress={handleSave}
             style={[styles.saveBtn, { backgroundColor: colors.primary }]}
-            activeOpacity={0.8}
+            activeOpacity={0.85}
           >
             <Text style={[styles.saveBtnText, { color: colors.primaryForeground }]}>
               {habit ? 'Save Changes' : 'Create Habit'}
@@ -101,25 +166,49 @@ interface HabitRowProps {
   onEdit: () => void;
   onDelete: () => void;
   onToggle: () => void;
+  isLast?: boolean;
 }
 
-function HabitRow({ habit, onEdit, onDelete, onToggle }: HabitRowProps) {
+function HabitRowItem({ habit, onEdit, onDelete, onToggle, isLast }: HabitRowProps) {
   const colors = useColors();
   return (
-    <View style={[styles.habitRow, { borderBottomColor: colors.border }]}>
+    <View
+      style={[
+        styles.habitRow,
+        !isLast && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
+      ]}
+    >
       <View style={[styles.habitColorDot, { backgroundColor: habit.color }]} />
-      <Text style={[styles.habitName, { color: colors.text }]} numberOfLines={1}>{habit.name}</Text>
+      <View style={styles.habitInfo}>
+        <Text style={[styles.habitName, { color: colors.text }]} numberOfLines={1}>
+          {habit.name}
+        </Text>
+        <Text style={[styles.habitStatus, { color: habit.active ? colors.primary : colors.textMuted }]}>
+          {habit.active ? 'Active' : 'Paused'}
+        </Text>
+      </View>
       <View style={styles.habitActions}>
         <Switch
           value={habit.active}
           onValueChange={onToggle}
           trackColor={{ false: colors.border, true: colors.primaryDim }}
           thumbColor={habit.active ? colors.primary : colors.textMuted}
+          style={{ transform: [{ scaleX: 0.85 }, { scaleY: 0.85 }] }}
         />
-        <TouchableOpacity onPress={onEdit} activeOpacity={0.7} style={styles.iconBtn}>
+        <TouchableOpacity
+          onPress={onEdit}
+          activeOpacity={0.7}
+          style={styles.iconBtn}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <Feather name="edit-2" size={15} color={colors.textSecondary} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={onDelete} activeOpacity={0.7} style={styles.iconBtn}>
+        <TouchableOpacity
+          onPress={onDelete}
+          activeOpacity={0.7}
+          style={styles.iconBtn}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <Feather name="trash-2" size={15} color={colors.destructive} />
         </TouchableOpacity>
       </View>
@@ -129,12 +218,12 @@ function HabitRow({ habit, onEdit, onDelete, onToggle }: HabitRowProps) {
 
 export default function SettingsTab() {
   const colors = useColors();
-  const { habits, updateHabit, deleteHabit } = useApp();
+  const { habits, updateHabit, deleteHabit, tasks, journals } = useApp();
   const [showModal, setShowModal] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | undefined>();
 
   function handleDelete(habit: Habit) {
-    Alert.alert('Delete Habit', `Remove "${habit.name}"? This will delete all related tasks.`, [
+    Alert.alert('Delete Habit', `Remove "${habit.name}"?\nAll related task records will be removed.`, [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Delete', style: 'destructive', onPress: () => {
@@ -145,73 +234,102 @@ export default function SettingsTab() {
     ]);
   }
 
-  function handleEdit(habit: Habit) {
-    setEditingHabit(habit);
-    setShowModal(true);
-  }
-
-  function handleAdd() {
-    setEditingHabit(undefined);
-    setShowModal(true);
-  }
-
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.section}>
-        <View style={styles.sectionHeaderRow}>
-          <Text style={[styles.sectionTitle, { color: colors.textMuted }]}>HABITS</Text>
-          <TouchableOpacity onPress={handleAdd} activeOpacity={0.7} style={styles.addBtn}>
-            <Feather name="plus" size={16} color={colors.primary} />
-            <Text style={[styles.addBtnText, { color: colors.primary }]}>Add</Text>
-          </TouchableOpacity>
-        </View>
+      <SectionHeader
+        title="HABITS"
+        action="Add Habit"
+        onAction={() => { setEditingHabit(undefined); setShowModal(true); }}
+      />
 
-        {habits.length === 0 ? (
-          <View style={[styles.emptyHabits, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Feather name="repeat" size={28} color={colors.textMuted} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No habits yet</Text>
-            <Text style={[styles.emptySub, { color: colors.textMuted }]}>Add habits to track them daily</Text>
+      {habits.length === 0 ? (
+        <TouchableOpacity
+          onPress={() => { setEditingHabit(undefined); setShowModal(true); }}
+          activeOpacity={0.8}
+          style={[styles.emptyCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+        >
+          <View style={[styles.emptyIconWrap, { backgroundColor: colors.primaryDim }]}>
+            <Feather name="repeat" size={22} color={colors.primary} />
           </View>
-        ) : (
-          <View style={[styles.habitList, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            {habits.map(h => (
-              <HabitRow
-                key={h.id}
-                habit={h}
-                onEdit={() => handleEdit(h)}
-                onDelete={() => handleDelete(h)}
-                onToggle={() => updateHabit(h.id, { active: !h.active })}
-              />
-            ))}
-          </View>
-        )}
+          <Text style={[styles.emptyTitle, { color: colors.text }]}>No habits yet</Text>
+          <Text style={[styles.emptySub, { color: colors.textMuted }]}>
+            Tap to create your first daily habit
+          </Text>
+        </TouchableOpacity>
+      ) : (
+        <View style={[styles.groupCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          {habits.map((h, i) => (
+            <HabitRowItem
+              key={h.id}
+              habit={h}
+              onEdit={() => { setEditingHabit(h); setShowModal(true); }}
+              onDelete={() => handleDelete(h)}
+              onToggle={() => { updateHabit(h.id, { active: !h.active }); }}
+              isLast={i === habits.length - 1}
+            />
+          ))}
+        </View>
+      )}
+
+      <SectionHeader title="DATA" />
+      <View style={[styles.groupCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <SettingsRow
+          icon="layers"
+          iconColor="#60A5FA"
+          label="Tasks Recorded"
+          value={`${tasks.length}`}
+          isLast={false}
+        />
+        <SettingsRow
+          icon="book-open"
+          iconColor="#A78BFA"
+          label="Journal Entries"
+          value={`${journals.length}`}
+          isLast={false}
+        />
+        <SettingsRow
+          icon="repeat"
+          iconColor="#F9A8D4"
+          label="Active Habits"
+          value={`${habits.filter(h => h.active).length}`}
+          isLast
+        />
       </View>
 
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.textMuted }]}>APP INFO</Text>
-        <View style={[styles.infoCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <View style={styles.infoRow}>
-            <Feather name="grid" size={16} color={colors.primary} />
-            <Text style={[styles.infoLabel, { color: colors.text }]}>Life OS</Text>
-            <Text style={[styles.infoValue, { color: colors.textMuted }]}>v1.0</Text>
-          </View>
-          <View style={[styles.infoRowDivider, { backgroundColor: colors.border }]} />
-          <View style={styles.infoRow}>
-            <Feather name="database" size={16} color={colors.textSecondary} />
-            <Text style={[styles.infoLabel, { color: colors.text }]}>Storage</Text>
-            <Text style={[styles.infoValue, { color: colors.textMuted }]}>Local</Text>
-          </View>
-          <View style={[styles.infoRowDivider, { backgroundColor: colors.border }]} />
-          <View style={styles.infoRow}>
-            <Feather name="wifi-off" size={16} color={colors.textSecondary} />
-            <Text style={[styles.infoLabel, { color: colors.text }]}>Mode</Text>
-            <Text style={[styles.infoValue, { color: colors.textMuted }]}>Offline-first</Text>
-          </View>
-        </View>
+      <SectionHeader title="PREFERENCES" />
+      <View style={[styles.groupCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <SettingsRow
+          icon="moon"
+          iconColor="#A78BFA"
+          label="Theme"
+          value="System"
+          isLast={false}
+        />
+        <SettingsRow
+          icon="bell"
+          iconColor="#FDBA74"
+          label="Notifications"
+          value="Coming soon"
+          isLast={false}
+        />
+        <SettingsRow
+          icon="shield"
+          iconColor="#34D399"
+          label="Data Backup"
+          value="Coming soon"
+          isLast
+        />
+      </View>
+
+      <SectionHeader title="ABOUT" />
+      <View style={[styles.groupCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <SettingsRow icon="grid" iconColor={colors.primary} label="Life OS" value="v1.0" isLast={false} />
+        <SettingsRow icon="wifi-off" iconColor="#60A5FA" label="Mode" value="Offline-first" isLast={false} />
+        <SettingsRow icon="database" iconColor="#A78BFA" label="Storage" value="Local device" isLast />
       </View>
 
       <HabitModal
@@ -225,57 +343,98 @@ export default function SettingsTab() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { padding: 20, paddingBottom: 120 },
-  section: { marginBottom: 32 },
-  sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
+  content: { paddingBottom: 120 },
+
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 28,
+    paddingBottom: 10,
+  },
   sectionTitle: { fontSize: 11, fontWeight: '700', letterSpacing: 1.5 },
-  addBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  addBtnText: { fontSize: 14, fontWeight: '600' },
-  habitList: {
+  sectionAction: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  sectionActionText: { fontSize: 13, fontWeight: '600' },
+
+  groupCard: {
+    marginHorizontal: 16,
     borderRadius: 16,
     borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
   },
+
+  settingsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    gap: 12,
+  },
+  settingsIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  settingsLabel: { flex: 1, fontSize: 15, fontWeight: '400' },
+  settingsValue: { fontSize: 14 },
+
   habitRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
     paddingHorizontal: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 13,
     gap: 12,
   },
   habitColorDot: { width: 10, height: 10, borderRadius: 5 },
-  habitName: { flex: 1, fontSize: 15 },
-  habitActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  iconBtn: { padding: 4 },
-  emptyHabits: {
+  habitInfo: { flex: 1 },
+  habitName: { fontSize: 15, fontWeight: '400' },
+  habitStatus: { fontSize: 11, marginTop: 2 },
+  habitActions: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  iconBtn: { padding: 5 },
+
+  emptyCard: {
+    marginHorizontal: 16,
     borderRadius: 16,
     borderWidth: StyleSheet.hairlineWidth,
-    padding: 32,
+    borderStyle: 'dashed',
+    padding: 28,
     alignItems: 'center',
     gap: 10,
   },
-  emptyText: { fontSize: 16, fontWeight: '500' },
-  emptySub: { fontSize: 13 },
-  infoCard: {
-    borderRadius: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    overflow: 'hidden',
+  emptyIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
   },
-  infoRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, gap: 12 },
-  infoLabel: { flex: 1, fontSize: 15 },
-  infoValue: { fontSize: 14 },
-  infoRowDivider: { height: StyleSheet.hairlineWidth, marginLeft: 44 },
+  emptyTitle: { fontSize: 16, fontWeight: '600' },
+  emptySub: { fontSize: 13, textAlign: 'center', lineHeight: 18 },
+
   modalOverlay: { flex: 1, justifyContent: 'flex-end' },
   modalSheet: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
     padding: 24,
-    paddingBottom: 40,
+    paddingBottom: Platform.OS === 'android' ? 32 : 44,
     borderWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: 0,
+    gap: 4,
   },
-  modalTitle: { fontSize: 18, fontWeight: '700', marginBottom: 20 },
+  modalHandle: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: { fontSize: 19, fontWeight: '700', marginBottom: 20 },
+  fieldLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 1.4, marginBottom: 8 },
   input: {
     borderRadius: 12,
     borderWidth: 1,
@@ -284,10 +443,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 20,
   },
-  colorLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 1.5, marginBottom: 12 },
-  colorRow: { flexDirection: 'row', gap: 10, marginBottom: 24 },
+  colorRow: { flexDirection: 'row', gap: 10, marginBottom: 28 },
+  colorDotWrap: { position: 'relative' },
   colorDot: { width: 32, height: 32, borderRadius: 16 },
-  colorDotSelected: { borderWidth: 3, borderColor: 'white', transform: [{ scale: 1.15 }] },
+  colorCheck: {
+    position: 'absolute',
+    top: 0, right: 0, bottom: 0, left: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   saveBtn: { paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
   saveBtnText: { fontSize: 16, fontWeight: '700' },
 });

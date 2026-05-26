@@ -1,0 +1,268 @@
+Refine and improve the existing Analysis and Settings sections WITHOUT redesigning the current UI.
+
+The current analytics screen already looks premium and visually strong.
+Keep the overall structure and visual style exactly as it is.
+
+ONLY improve:
+
+* functionality
+* responsiveness
+* spacing
+* icon rendering
+* layout polish
+* filtering capabilities
+
+==================================================
+
+1. ANALYTICS FILTER SYSTEM
+   ==================================================
+
+Currently the analytics only show:
+
+* 30-day trend
+
+This is too limited.
+
+Add advanced filtering and timeline switching.
+
+==================================================
+REQUIRED FILTER OPTIONS
+=======================
+
+Add a premium segmented control or pill selector at the top of analytics.
+
+Filters:
+
+1. Today
+2. Weekly
+3. Monthly
+4. Yearly
+5. Total / Lifetime
+
+Requirements:
+
+* smooth animated switching
+* glassmorphism pill buttons
+* active filter glow
+* instant chart updates
+* animated graph transitions
+
+==================================================
+TOTAL / LIFETIME STATS
+======================
+
+Add lifetime statistics mode.
+
+Requirements:
+
+* total tasks completed
+* total habits completed
+* longest streak
+* total productive days
+* gold days count
+* average productivity
+* mood distribution
+* yearly completion %
+
+The lifetime section should feel:
+
+* meaningful
+* emotional
+* like a visualized life archive
+
+==================================================
+2. GRAPH IMPROVEMENTS
+=====================
+
+Improve the trend graph.
+
+Requirements:
+
+* dynamic scaling
+* animated graph transitions
+* proper data smoothing
+* responsive chart resizing
+
+When switching filters:
+
+* animate graph smoothly
+* preserve premium feel
+
+==================================================
+3. ICON RENDERING FIX
+=====================
+
+IMPORTANT ISSUE:
+Icons are broken or displaying incorrectly on real Android devices.
+
+Current issue:
+Icons appear as:
+
+* weird boxes
+* missing glyphs
+* unsupported characters
+
+Fix ALL icon rendering issues.
+
+==================================================
+REQUIREMENTS
+============
+
+Use:
+
+* Expo Vector Icons
+  OR
+* Lucide React Native
+  OR
+* properly supported icon library
+
+Ensure:
+
+* icons render correctly on Android
+* icons render correctly in Expo Go
+* icons render correctly on real devices
+* no unicode fallback issues
+
+Replace any:
+
+* unsupported unicode icons
+* text-based symbols
+* broken glyph characters
+
+Use proper vector icons everywhere.
+
+==================================================
+4. SETTINGS SCREEN POLISH
+=========================
+
+The Settings section currently feels:
+
+* misaligned
+* inconsistent spacing
+* less premium than other screens
+
+Improve:
+
+* spacing
+* alignment
+* padding
+* card hierarchy
+* typography consistency
+* touch targets
+
+==================================================
+SETTINGS UI REQUIREMENTS
+========================
+
+Requirements:
+
+* clean grouped settings sections
+* iOS-inspired layout
+* smooth spacing
+* premium glass cards
+* proper visual hierarchy
+* responsive alignment
+
+Add:
+
+* section headers
+* consistent margins
+* better toggle alignment
+* elegant separators
+
+==================================================
+SETTINGS FEATURES
+=================
+
+Preserve existing settings and improve layout for:
+
+* habits management
+* theme settings
+* notifications
+* preferences
+* backup
+* mood settings
+
+==================================================
+5. RESPONSIVE MOBILE POLISH
+===========================
+
+Ensure ALL screens:
+
+* align properly on Android
+* have safe-area spacing
+* avoid clipping
+* avoid overflow
+* use responsive sizing
+
+Requirements:
+
+* dynamic padding
+* consistent spacing scale
+* proper bottom navigation spacing
+* proper scroll spacing
+
+==================================================
+6. PREMIUM MICRO-INTERACTIONS
+=============================
+
+Add subtle polish animations:
+
+* smooth filter switching
+* soft glow transitions
+* hover/press feedback
+* animated stat updates
+* elegant graph transitions
+
+Avoid:
+
+* excessive animations
+* flashy effects
+* clutter
+
+==================================================
+7. PERFORMANCE REQUIREMENTS
+===========================
+
+Ensure:
+
+* smooth scrolling
+* optimized rerenders
+* lightweight animations
+* fast chart rendering
+* responsive touch handling
+
+==================================================
+IMPORTANT
+=========
+
+DO NOT:
+
+* redesign the app
+* replace the visual identity
+* change the current premium dark aesthetic
+* rebuild analytics from scratch
+
+ONLY:
+
+* refine
+* polish
+* improve functionality
+* fix mobile rendering
+* improve responsiveness
+
+==================================================
+FINAL GOAL
+==========
+
+The app should feel:
+
+* premium
+* emotionally immersive
+* polished on real Android devices
+* App Store quality
+* futuristic but minimal
+* smooth and responsive
+
+The analytics should feel like:
+a beautiful visualization of life progression.
