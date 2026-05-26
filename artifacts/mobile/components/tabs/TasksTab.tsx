@@ -3,11 +3,11 @@ import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
 import {
   Alert,
-  FlatList,
   KeyboardAvoidingView,
   Modal,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -18,7 +18,7 @@ import Animated, { FadeInDown, FadeOutLeft } from 'react-native-reanimated';
 import { useColors } from '@/hooks/useColors';
 import { useApp, Task } from '@/context/AppContext';
 
-type Category = 'daily' | 'anytime' | 'habit';
+type Category = 'daily' | 'anytime';
 
 interface TaskRowProps {
   task: Task;
@@ -28,6 +28,7 @@ interface TaskRowProps {
 
 function TaskRow({ task, onToggle, onDelete }: TaskRowProps) {
   const colors = useColors();
+  const isVirtual = task.id.startsWith('__virtual__');
 
   return (
     <Animated.View entering={FadeInDown} exiting={FadeOutLeft}>
@@ -41,11 +42,13 @@ function TaskRow({ task, onToggle, onDelete }: TaskRowProps) {
               backgroundColor: task.completed ? colors.primaryDim : 'transparent',
             },
           ]}
-          activeOpacity={0.7}
+          activeOpacity={0.6}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          {task.completed && <Feather name="check" size={12} color={colors.primary} />}
+          {task.completed && <Feather name="check" size={11} color={colors.primary} />}
         </TouchableOpacity>
-        <View style={styles.taskContent}>
+
+        <TouchableOpacity onPress={onToggle} style={styles.taskContent} activeOpacity={0.7}>
           <Text
             style={[
               styles.taskTitle,
@@ -63,10 +66,18 @@ function TaskRow({ task, onToggle, onDelete }: TaskRowProps) {
               <Text style={[styles.habitBadgeText, { color: colors.primary }]}>habit</Text>
             </View>
           )}
-        </View>
-        <TouchableOpacity onPress={onDelete} style={styles.deleteBtn} activeOpacity={0.7}>
-          <Feather name="trash-2" size={16} color={colors.textMuted} />
         </TouchableOpacity>
+
+        {!isVirtual && (
+          <TouchableOpacity
+            onPress={onDelete}
+            style={styles.deleteBtn}
+            activeOpacity={0.6}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Feather name="trash-2" size={15} color={colors.textMuted} />
+          </TouchableOpacity>
+        )}
       </View>
     </Animated.View>
   );
@@ -156,7 +167,7 @@ interface Props {
 
 export default function TasksTab({ date }: Props) {
   const colors = useColors();
-  const { getDayTasks, toggleTask, deleteTask } = useApp();
+  const { getDayTasks, toggleTask, toggleHabitTask, deleteTask } = useApp();
   const [showModal, setShowModal] = useState(false);
 
   const tasks = getDayTasks(date);
@@ -164,13 +175,16 @@ export default function TasksTab({ date }: Props) {
   const daily = tasks.filter(t => t.category === 'daily');
   const anytime = tasks.filter(t => t.category === 'anytime');
 
+  const completed = tasks.filter(t => t.completed).length;
+  const total = tasks.length;
+
   function handleToggle(task: Task) {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (task.id.startsWith('habit_')) {
-      // Virtual habit task - no persistent record, ignore
-      return;
+    if (task.habitId) {
+      toggleHabitTask(task.habitId, date);
+    } else {
+      toggleTask(task.id);
     }
-    toggleTask(task.id);
   }
 
   function handleDelete(task: Task) {
@@ -191,9 +205,6 @@ export default function TasksTab({ date }: Props) {
     { title: 'Anytime', data: anytime },
   ].filter(s => s.data.length > 0);
 
-  const completed = tasks.filter(t => t.completed).length;
-  const total = tasks.length;
-
   return (
     <View style={styles.container}>
       {total > 0 && (
@@ -210,32 +221,35 @@ export default function TasksTab({ date }: Props) {
         </View>
       )}
 
-      <FlatList
-        data={sections}
-        keyExtractor={s => s.title}
-        renderItem={({ item: section }) => (
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.textMuted }]}>{section.title.toUpperCase()}</Text>
-            {section.data.map(task => (
-              <TaskRow
-                key={task.id}
-                task={task}
-                onToggle={() => handleToggle(task)}
-                onDelete={() => handleDelete(task)}
-              />
-            ))}
-          </View>
-        )}
-        ListEmptyComponent={
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 120, flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        {sections.length === 0 ? (
           <View style={styles.empty}>
             <Feather name="check-circle" size={36} color={colors.textMuted} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No tasks yet</Text>
             <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Tap + to add a task for this day</Text>
           </View>
-        }
-        contentContainerStyle={{ paddingBottom: 120, flexGrow: 1 }}
-        showsVerticalScrollIndicator={false}
-      />
+        ) : (
+          sections.map(section => (
+            <View key={section.title} style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: colors.textMuted }]}>
+                {section.title.toUpperCase()}
+              </Text>
+              {section.data.map(task => (
+                <TaskRow
+                  key={task.id}
+                  task={task}
+                  onToggle={() => handleToggle(task)}
+                  onDelete={() => handleDelete(task)}
+                />
+              ))}
+            </View>
+          ))
+        )}
+      </ScrollView>
 
       <TouchableOpacity
         onPress={() => setShowModal(true)}
@@ -256,35 +270,35 @@ const styles = StyleSheet.create({
     height: 2,
     marginHorizontal: 20,
     marginTop: 16,
-    marginBottom: 8,
+    marginBottom: 4,
     borderRadius: 2,
     overflow: 'hidden',
   },
   progressFill: { height: '100%', borderRadius: 2 },
   section: { marginTop: 24, paddingHorizontal: 20 },
-  sectionTitle: { fontSize: 11, fontWeight: '700', letterSpacing: 1.5, marginBottom: 12 },
+  sectionTitle: { fontSize: 11, fontWeight: '700', letterSpacing: 1.5, marginBottom: 10 },
   taskRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
+    paddingVertical: 13,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   checkbox: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 14,
   },
-  taskContent: { flex: 1 },
+  taskContent: { flex: 1, paddingRight: 8 },
   taskTitle: { fontSize: 15, fontWeight: '400', lineHeight: 22 },
   habitBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 8,
+    paddingHorizontal: 7,
     paddingVertical: 2,
-    borderRadius: 6,
+    borderRadius: 5,
     marginTop: 4,
   },
   habitBadgeText: { fontSize: 10, fontWeight: '600', letterSpacing: 0.5 },
@@ -301,11 +315,11 @@ const styles = StyleSheet.create({
     borderRadius: 27,
     alignItems: 'center',
     justifyContent: 'center',
+    elevation: 6,
     shadowColor: '#39FF7E',
     shadowOpacity: 0.4,
-    shadowRadius: 16,
+    shadowRadius: 12,
     shadowOffset: { width: 0, height: 4 },
-    elevation: 8,
   },
   modalOverlay: { flex: 1, justifyContent: 'flex-end' },
   modalSheet: {
@@ -334,10 +348,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   catText: { fontSize: 13, fontWeight: '600' },
-  addBtn: {
-    paddingVertical: 16,
-    borderRadius: 14,
-    alignItems: 'center',
-  },
+  addBtn: { paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
   addBtnText: { fontSize: 16, fontWeight: '700' },
 });

@@ -1,0 +1,322 @@
+Update and refine the existing Life OS / Productivity Hub mobile app.
+
+The app is already partially working and the UI foundation exists.
+
+DO NOT redesign the entire app.
+DO NOT break existing architecture.
+ONLY improve and fix the current implementation professionally.
+
+==================================================
+CRITICAL FIXES REQUIRED
+=======================
+
+==================================================
+
+1. SYSTEM THEME SUPPORT
+   ==================================================
+
+The app must automatically switch between:
+
+* Dark Mode
+* Light Mode
+
+based on:
+
+* device system settings
+
+Requirements:
+
+* use Appearance API or system theme detection
+* instant theme switching
+* smooth transitions
+* preserve glassmorphism style
+
+Dark Theme:
+
+* matte black background
+* neon green highlights
+* soft glow
+* futuristic premium feel
+
+Light Theme:
+
+* soft white backgrounds
+* subtle green accents
+* clean glass cards
+* calm iOS-inspired aesthetic
+
+The app must feel:
+
+* native
+* polished
+* premium
+
+==================================================
+2. GRID ALIGNMENT FIX
+=====================
+
+The dot-grid is currently misaligned and uneven.
+
+Fix:
+
+* perfect vertical alignment
+* proper spacing
+* centered layout
+* responsive scaling
+* dynamic screen fitting
+
+Requirements:
+
+* 365 dots fit properly
+* smooth scrolling
+* equal spacing
+* adaptive sizing for all Android screens
+* no clipping or overflow
+
+The grid should visually feel:
+
+* symmetrical
+* elegant
+* minimal
+* premium
+
+IMPORTANT:
+The grid is the MAIN identity of the app.
+
+==================================================
+3. MOBILE ICON PRESS FIX
+========================
+
+Issue:
+Icons/buttons work in preview but NOT on real Android devices.
+
+Fix all mobile interaction issues.
+
+Requirements:
+
+* all buttons clickable on physical devices
+* fix touch handling
+* correct z-index issues
+* correct gesture handling
+* ensure TouchableOpacity/Pressable works properly
+* ensure overlays do not block touches
+
+Test interactions on:
+
+* Android real device
+* Expo Go
+
+==================================================
+4. HABIT CHECKING FIX
+=====================
+
+Issue:
+Habits appear in Tasks section but cannot be checked/completed.
+
+Requirements:
+
+* habits must be fully interactive
+* tap to complete
+* tap again to uncomplete
+* update state instantly
+* persist completion locally
+
+When habit is checked:
+
+* grid updates
+* analytics update
+* streak updates
+
+Requirements:
+
+* proper state management
+* responsive UI updates
+* animated completion state
+
+==================================================
+5. MOOD TRACKING SYSTEM
+=======================
+
+Add a mood tracking feature inside Journal section.
+
+At the bottom of Journal:
+Add mood selector buttons.
+
+Mood options:
+
+1. Very Happy
+2. Happy
+3. Normal
+4. Sad
+5. Gold
+
+==================================================
+MOOD SYSTEM BEHAVIOR
+====================
+
+Normal moods:
+
+* save emotional state for that day
+* affect analytics
+
+Gold Mood:
+SPECIAL DAY STATUS
+
+If user selects:
+"Gold"
+
+Then:
+
+* that day’s grid dot becomes GOLD color
+* golden glow animation
+* special highlight
+* premium visual effect
+
+Gold days represent:
+
+* legendary days
+* peak memories
+* special life moments
+
+Requirements:
+
+* persistent storage
+* analytics integration
+* smooth animations
+* premium visual feedback
+
+==================================================
+GRID COLOR STATES
+=================
+
+Future Days:
+
+* transparent/glass dots
+
+Completed Days:
+
+* solid white dots
+
+Current Day:
+
+* glowing green dot
+
+Missed Days:
+
+* dim gray dots
+
+Gold Days:
+
+* metallic gold dot
+* soft golden aura
+
+==================================================
+ANIMATION REQUIREMENTS
+======================
+
+Requirements:
+
+* smooth 60fps animations
+* subtle glow transitions
+* elegant scaling
+* premium micro-interactions
+
+Mood Selection:
+
+* smooth press animations
+* glow effect on selected mood
+* elegant transitions
+
+Grid:
+
+* smooth state transitions
+* subtle pulse animations
+* premium glow
+
+==================================================
+STATE MANAGEMENT
+================
+
+Ensure:
+
+* all state updates are reactive
+* UI updates automatically
+* no stale data
+* local persistence works correctly
+
+Requirements:
+
+* proper architecture
+* scalable state handling
+* optimized rerenders
+
+==================================================
+ANALYTICS IMPROVEMENTS
+======================
+
+Update analytics to include:
+
+* mood trends
+* gold days count
+* habit completion %
+* productivity streaks
+* emotional trend graphs
+
+==================================================
+UI QUALITY IMPROVEMENTS
+=======================
+
+Refine:
+
+* spacing
+* padding
+* typography
+* touch targets
+* alignment
+* icon consistency
+
+The app should feel:
+
+* App Store quality
+* smooth
+* emotionally immersive
+* premium minimalism
+
+==================================================
+IMPORTANT
+=========
+
+DO NOT:
+
+* redesign entire app
+* remove current architecture
+* break navigation
+* replace existing systems unnecessarily
+
+ONLY:
+
+* refine
+* fix
+* enhance
+* connect functionality
+
+Preserve:
+
+* current app structure
+* current visual identity
+* dot-grid concept
+* minimalist Life OS aesthetic
+
+==================================================
+FINAL GOAL
+==========
+
+The result should feel like:
+
+* a premium iOS-inspired productivity OS
+* emotionally immersive
+* minimal futuristic app
+* smooth and polished on real Android devices
+* fully functional and reactive
+
+The grid should feel alive and meaningful.

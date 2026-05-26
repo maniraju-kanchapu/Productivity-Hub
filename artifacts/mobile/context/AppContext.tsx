@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
+export type MoodType = 'great' | 'good' | 'okay' | 'sad' | 'gold';
+
 export interface Task {
   id: string;
   title: string;
@@ -31,12 +33,14 @@ export interface DayStatus {
   tasksCompleted: number;
   hasJournal: boolean;
   completionRate: number;
+  mood?: MoodType;
 }
 
 interface AppState {
   tasks: Task[];
   habits: Habit[];
   journals: JournalEntry[];
+  moods: Record<string, MoodType>;
   loaded: boolean;
 }
 
@@ -45,11 +49,14 @@ interface AppContextType extends AppState {
   updateTask: (id: string, changes: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   toggleTask: (id: string) => void;
+  toggleHabitTask: (habitId: string, date: string) => void;
   addHabit: (habit: Omit<Habit, 'id' | 'createdAt'>) => void;
   updateHabit: (id: string, changes: Partial<Habit>) => void;
   deleteHabit: (id: string) => void;
   saveJournal: (date: string, content: string) => void;
   getJournal: (date: string) => JournalEntry | undefined;
+  setMood: (date: string, mood: MoodType | null) => void;
+  getMood: (date: string) => MoodType | undefined;
   getDayTasks: (date: string) => Task[];
   getDayStatus: (date: string) => DayStatus;
   getHabitStreak: (habitId: string) => number;
@@ -57,6 +64,8 @@ interface AppContextType extends AppState {
   getWeeklyCompletion: () => number[];
   getMonthlyStats: () => { date: string; rate: number }[];
   getTotalTasksCompleted: () => number;
+  getGoldDaysCount: () => number;
+  getMoodTrend: () => { date: string; mood: MoodType | undefined }[];
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -64,6 +73,7 @@ const AppContext = createContext<AppContextType | null>(null);
 const TASKS_KEY = '@lifeos_tasks';
 const HABITS_KEY = '@lifeos_habits';
 const JOURNALS_KEY = '@lifeos_journals';
+const MOODS_KEY = '@lifeos_moods';
 
 function generateId(): string {
   return Date.now().toString() + Math.random().toString(36).substr(2, 9);
@@ -78,7 +88,7 @@ function dateStr(date: Date): string {
 }
 
 function addDays(dateString: string, days: number): string {
-  const d = new Date(dateString);
+  const d = new Date(dateString + 'T12:00:00');
   d.setDate(d.getDate() + days);
   return dateStr(d);
 }
@@ -88,6 +98,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     tasks: [],
     habits: [],
     journals: [],
+    moods: {},
     loaded: false,
   });
 
@@ -97,15 +108,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   async function loadData() {
     try {
-      const [tasksRaw, habitsRaw, journalsRaw] = await Promise.all([
+      const [tasksRaw, habitsRaw, journalsRaw, moodsRaw] = await Promise.all([
         AsyncStorage.getItem(TASKS_KEY),
         AsyncStorage.getItem(HABITS_KEY),
         AsyncStorage.getItem(JOURNALS_KEY),
+        AsyncStorage.getItem(MOODS_KEY),
       ]);
-      const tasks: Task[] = tasksRaw ? JSON.parse(tasksRaw) : [];
-      const habits: Habit[] = habitsRaw ? JSON.parse(habitsRaw) : [];
-      const journals: JournalEntry[] = journalsRaw ? JSON.parse(journalsRaw) : [];
-      setState({ tasks, habits, journals, loaded: true });
+      setState({
+        tasks: tasksRaw ? JSON.parse(tasksRaw) : [],
+        habits: habitsRaw ? JSON.parse(habitsRaw) : [],
+        journals: journalsRaw ? JSON.parse(journalsRaw) : [],
+        moods: moodsRaw ? JSON.parse(moodsRaw) : {},
+        loaded: true,
+      });
     } catch {
       setState(s => ({ ...s, loaded: true }));
     }
@@ -114,13 +129,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   async function saveTasks(tasks: Task[]) {
     await AsyncStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
   }
-
   async function saveHabits(habits: Habit[]) {
     await AsyncStorage.setItem(HABITS_KEY, JSON.stringify(habits));
   }
-
   async function saveJournals(journals: JournalEntry[]) {
     await AsyncStorage.setItem(JOURNALS_KEY, JSON.stringify(journals));
+  }
+  async function saveMoods(moods: Record<string, MoodType>) {
+    await AsyncStorage.setItem(MOODS_KEY, JSON.stringify(moods));
   }
 
   const addTask = useCallback((task: Omit<Task, 'id'>) => {
@@ -155,6 +171,35 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         const completed = !t.completed;
         return { ...t, completed, completedAt: completed ? new Date().toISOString() : undefined };
       });
+      saveTasks(tasks);
+      return { ...s, tasks };
+    });
+  }, []);
+
+  const toggleHabitTask = useCallback((habitId: string, date: string) => {
+    setState(s => {
+      const existingIdx = s.tasks.findIndex(t => t.habitId === habitId && t.date === date);
+      let tasks: Task[];
+      if (existingIdx >= 0) {
+        tasks = s.tasks.map((t, i) => {
+          if (i !== existingIdx) return t;
+          const completed = !t.completed;
+          return { ...t, completed, completedAt: completed ? new Date().toISOString() : undefined };
+        });
+      } else {
+        const habit = s.habits.find(h => h.id === habitId);
+        if (!habit) return s;
+        const newTask: Task = {
+          id: generateId(),
+          title: habit.name,
+          date,
+          completed: true,
+          category: 'habit',
+          habitId,
+          completedAt: new Date().toISOString(),
+        };
+        tasks = [...s.tasks, newTask];
+      }
       saveTasks(tasks);
       return { ...s, tasks };
     });
@@ -196,13 +241,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           j.date === date ? { ...j, content, updatedAt: new Date().toISOString() } : j
         );
       } else {
-        const entry: JournalEntry = {
-          id: generateId(),
-          date,
-          content,
-          updatedAt: new Date().toISOString(),
-        };
-        journals = [...s.journals, entry];
+        journals = [...s.journals, { id: generateId(), date, content, updatedAt: new Date().toISOString() }];
       }
       saveJournals(journals);
       return { ...s, journals };
@@ -213,6 +252,23 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return state.journals.find(j => j.date === date);
   }, [state.journals]);
 
+  const setMood = useCallback((date: string, mood: MoodType | null) => {
+    setState(s => {
+      const moods = { ...s.moods };
+      if (mood === null) {
+        delete moods[date];
+      } else {
+        moods[date] = mood;
+      }
+      saveMoods(moods);
+      return { ...s, moods };
+    });
+  }, []);
+
+  const getMood = useCallback((date: string): MoodType | undefined => {
+    return state.moods[date];
+  }, [state.moods]);
+
   const getDayTasks = useCallback((date: string): Task[] => {
     const directTasks = state.tasks.filter(t => t.date === date && t.category !== 'habit');
     const habitTasks = state.habits
@@ -221,7 +277,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         const existing = state.tasks.find(t => t.habitId === habit.id && t.date === date);
         if (existing) return existing;
         return {
-          id: `habit_${habit.id}_${date}`,
+          id: `__virtual__${habit.id}__${date}`,
           title: habit.name,
           date,
           completed: false,
@@ -235,35 +291,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const getDayStatus = useCallback((date: string): DayStatus => {
     const tasks = getDayTasks(date);
     const journal = state.journals.find(j => j.date === date);
+    const mood = state.moods[date];
     const tasksTotal = tasks.length;
     const tasksCompleted = tasks.filter(t => t.completed).length;
     const completionRate = tasksTotal > 0 ? tasksCompleted / tasksTotal : 0;
-    return {
-      tasksTotal,
-      tasksCompleted,
-      hasJournal: !!journal,
-      completionRate,
-    };
-  }, [getDayTasks, state.journals]);
+    return { tasksTotal, tasksCompleted, hasJournal: !!journal, completionRate, mood };
+  }, [getDayTasks, state.journals, state.moods]);
 
   const getHabitStreak = useCallback((habitId: string): number => {
     const today = todayStr();
     let streak = 0;
     let current = today;
-    while (true) {
+    for (let i = 0; i < 365; i++) {
       const task = state.tasks.find(t => t.habitId === habitId && t.date === current);
       if (task?.completed) {
         streak++;
         current = addDays(current, -1);
-      } else if (current === today) {
+      } else if (i === 0) {
         current = addDays(current, -1);
-        const yesterday = state.tasks.find(t => t.habitId === habitId && t.date === current);
-        if (yesterday?.completed) {
-          streak++;
-          current = addDays(current, -1);
-        } else {
-          break;
-        }
       } else {
         break;
       }
@@ -272,9 +317,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [state.tasks]);
 
   const getOverallStreak = useCallback((): number => {
-    const today = todayStr();
     let streak = 0;
-    let current = addDays(today, -1);
+    let current = addDays(todayStr(), -1);
     for (let i = 0; i < 365; i++) {
       const status = getDayStatus(current);
       if (status.tasksCompleted > 0 || status.hasJournal) {
@@ -291,8 +335,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const today = todayStr();
     return Array.from({ length: 7 }, (_, i) => {
       const date = addDays(today, -(6 - i));
-      const status = getDayStatus(date);
-      return status.completionRate;
+      return getDayStatus(date).completionRate;
     });
   }, [getDayStatus]);
 
@@ -300,8 +343,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const today = todayStr();
     return Array.from({ length: 30 }, (_, i) => {
       const date = addDays(today, -(29 - i));
-      const status = getDayStatus(date);
-      return { date, rate: status.completionRate };
+      return { date, rate: getDayStatus(date).completionRate };
     });
   }, [getDayStatus]);
 
@@ -309,25 +351,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return state.tasks.filter(t => t.completed).length;
   }, [state.tasks]);
 
+  const getGoldDaysCount = useCallback((): number => {
+    return Object.values(state.moods).filter(m => m === 'gold').length;
+  }, [state.moods]);
+
+  const getMoodTrend = useCallback((): { date: string; mood: MoodType | undefined }[] => {
+    const today = todayStr();
+    return Array.from({ length: 14 }, (_, i) => {
+      const date = addDays(today, -(13 - i));
+      return { date, mood: state.moods[date] };
+    });
+  }, [state.moods]);
+
   return (
     <AppContext.Provider value={{
       ...state,
-      addTask,
-      updateTask,
-      deleteTask,
-      toggleTask,
-      addHabit,
-      updateHabit,
-      deleteHabit,
-      saveJournal,
-      getJournal,
-      getDayTasks,
-      getDayStatus,
-      getHabitStreak,
-      getOverallStreak,
-      getWeeklyCompletion,
-      getMonthlyStats,
-      getTotalTasksCompleted,
+      addTask, updateTask, deleteTask, toggleTask, toggleHabitTask,
+      addHabit, updateHabit, deleteHabit,
+      saveJournal, getJournal,
+      setMood, getMood,
+      getDayTasks, getDayStatus,
+      getHabitStreak, getOverallStreak,
+      getWeeklyCompletion, getMonthlyStats,
+      getTotalTasksCompleted, getGoldDaysCount, getMoodTrend,
     }}>
       {children}
     </AppContext.Provider>
