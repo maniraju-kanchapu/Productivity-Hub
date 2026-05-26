@@ -3,12 +3,14 @@ import {
   Inter_500Medium,
   Inter_600SemiBold,
   Inter_700Bold,
-  useFonts,
 } from '@expo-google-fonts/inter';
+import { Feather } from '@expo/vector-icons';
+import * as Font from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import * as SystemUI from 'expo-system-ui';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -27,17 +29,29 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
-  const [fontsLoaded, fontError] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-    Inter_700Bold,
-    Feather: require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Feather.ttf'),
-  });
+  const scheme = useColorScheme();
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [fontError, setFontError] = useState<Error | null>(null);
 
   useEffect(() => {
-    SystemUI.setBackgroundColorAsync('#0A0A0F');
+    Font.loadAsync({
+      Inter_400Regular,
+      Inter_500Medium,
+      Inter_600SemiBold,
+      Inter_700Bold,
+      ...Feather.font,
+    })
+      .then(() => setFontsLoaded(true))
+      .catch(e => {
+        setFontError(e);
+        setFontsLoaded(true);
+      });
   }, []);
+
+  useEffect(() => {
+    const bg = scheme === 'dark' ? '#0A0A0F' : '#F5F5FA';
+    SystemUI.setBackgroundColorAsync(bg);
+  }, [scheme]);
 
   useEffect(() => {
     if (fontsLoaded || fontError) {
