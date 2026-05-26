@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import Icon from '@/components/Icon';
 import * as Haptics from 'expo-haptics';
 import React, { useMemo, useRef, useState } from 'react';
 import {
@@ -328,7 +328,7 @@ export default function AnalysisTab({ date }: Props) {
         {filter !== 'all' && (
           <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.cardHeader}>
-              <Feather name="zap" size={15} color={colors.primary} />
+              <Icon name="zap" size={15} color={colors.primary} />
               <Text style={[styles.cardTitle, { color: colors.text }]}>Streak</Text>
               <Text style={[styles.streakNum, { color: colors.primary }]}>{overallStreak}</Text>
               <Text style={[styles.streakLabel, { color: colors.textMuted }]}>days</Text>
@@ -349,7 +349,7 @@ export default function AnalysisTab({ date }: Props) {
         {showChart && (
           <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.cardHeader}>
-              <Feather name="trending-up" size={15} color="#60A5FA" />
+              <Icon name="trending-up" size={15} color="#60A5FA" />
               <Text style={[styles.cardTitle, { color: colors.text }]}>{chartTitle}</Text>
             </View>
             <LineChart data={chartData} color="#60A5FA" />
@@ -364,7 +364,7 @@ export default function AnalysisTab({ date }: Props) {
         {filter !== 'all' && (
           <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.cardHeader}>
-              <Feather name="heart" size={15} color="#F9A8D4" />
+              <Icon name="heart" size={15} color="#F9A8D4" />
               <Text style={[styles.cardTitle, { color: colors.text }]}>
                 Mood ({moodWindow.length} days)
               </Text>
@@ -395,7 +395,7 @@ export default function AnalysisTab({ date }: Props) {
         {habits.filter(h => h.active).length > 0 && (
           <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.cardHeader}>
-              <Feather name="repeat" size={15} color="#F9A8D4" />
+              <Icon name="repeat" size={15} color="#F9A8D4" />
               <Text style={[styles.cardTitle, { color: colors.text }]}>Habit Streaks</Text>
             </View>
             {habits.filter(h => h.active).map(habit => {
@@ -404,7 +404,7 @@ export default function AnalysisTab({ date }: Props) {
                 <View key={habit.id} style={styles.habitRow}>
                   <View style={[styles.habitDot, { backgroundColor: habit.color }]} />
                   <Text style={[styles.habitName, { color: colors.text }]} numberOfLines={1}>{habit.name}</Text>
-                  <Feather name="zap" size={12} color={colors.primary} />
+                  <Icon name="zap" size={12} color={colors.primary} />
                   <Text style={[styles.habitStreakNum, { color: colors.primary }]}>{streak}</Text>
                 </View>
               );
@@ -416,17 +416,17 @@ export default function AnalysisTab({ date }: Props) {
         {filter !== 'all' && (
           <View style={styles.lifetimeRow}>
             <View style={[styles.lifetimeStat, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              <Feather name="check-circle" size={20} color={colors.primary} />
+              <Icon name="check-circle" size={20} color={colors.primary} />
               <Text style={[styles.lifetimeNum, { color: colors.text }]}>{totalCompleted}</Text>
               <Text style={[styles.lifetimeLabel, { color: colors.textMuted }]}>tasks done</Text>
             </View>
             <View style={[styles.lifetimeStat, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              <Feather name="star" size={20} color="#F5C842" />
+              <Icon name="star" size={20} color="#F5C842" />
               <Text style={[styles.lifetimeNum, { color: colors.text }]}>{goldCount}</Text>
               <Text style={[styles.lifetimeLabel, { color: colors.textMuted }]}>gold days</Text>
             </View>
             <View style={[styles.lifetimeStat, { backgroundColor: colors.card, borderColor: colors.border }]}>
-              <Feather name="book-open" size={20} color="#A78BFA" />
+              <Icon name="book-open" size={20} color="#A78BFA" />
               <Text style={[styles.lifetimeNum, { color: colors.text }]}>{journals.length}</Text>
               <Text style={[styles.lifetimeLabel, { color: colors.textMuted }]}>journal days</Text>
             </View>
@@ -438,13 +438,13 @@ export default function AnalysisTab({ date }: Props) {
           <>
             <View style={styles.statsRow}>
               <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Feather name="zap" size={26} color={colors.primary} />
+                <Icon name="zap" size={26} color={colors.primary} />
                 <Text style={[styles.bigNum, { color: colors.primary }]}>{longestStreak}</Text>
                 <Text style={[styles.statTitle, { color: colors.textSecondary }]}>Best Streak</Text>
                 <Text style={[styles.statSub, { color: colors.textMuted }]}>consecutive days</Text>
               </View>
               <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Feather name="calendar" size={26} color="#60A5FA" />
+                <Icon name="calendar" size={26} color="#60A5FA" />
                 <Text style={[styles.bigNum, { color: '#60A5FA' }]}>{productiveDays}</Text>
                 <Text style={[styles.statTitle, { color: colors.textSecondary }]}>Active Days</Text>
                 <Text style={[styles.statSub, { color: colors.textMuted }]}>out of 365</Text>
@@ -453,17 +453,17 @@ export default function AnalysisTab({ date }: Props) {
 
             <View style={styles.lifetimeRow}>
               <View style={[styles.lifetimeStat, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Feather name="check-circle" size={20} color={colors.primary} />
+                <Icon name="check-circle" size={20} color={colors.primary} />
                 <Text style={[styles.lifetimeNum, { color: colors.text }]}>{totalCompleted}</Text>
                 <Text style={[styles.lifetimeLabel, { color: colors.textMuted }]}>tasks done</Text>
               </View>
               <View style={[styles.lifetimeStat, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Feather name="repeat" size={20} color="#60A5FA" />
+                <Icon name="repeat" size={20} color="#60A5FA" />
                 <Text style={[styles.lifetimeNum, { color: colors.text }]}>{totalHabitCompletions}</Text>
                 <Text style={[styles.lifetimeLabel, { color: colors.textMuted }]}>habit checks</Text>
               </View>
               <View style={[styles.lifetimeStat, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Feather name="star" size={20} color="#F5C842" />
+                <Icon name="star" size={20} color="#F5C842" />
                 <Text style={[styles.lifetimeNum, { color: colors.text }]}>{goldCount}</Text>
                 <Text style={[styles.lifetimeLabel, { color: colors.textMuted }]}>gold days</Text>
               </View>
@@ -471,17 +471,17 @@ export default function AnalysisTab({ date }: Props) {
 
             <View style={styles.lifetimeRow}>
               <View style={[styles.lifetimeStat, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Feather name="book-open" size={20} color="#A78BFA" />
+                <Icon name="book-open" size={20} color="#A78BFA" />
                 <Text style={[styles.lifetimeNum, { color: colors.text }]}>{journals.length}</Text>
                 <Text style={[styles.lifetimeLabel, { color: colors.textMuted }]}>journal days</Text>
               </View>
               <View style={[styles.lifetimeStat, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Feather name="zap" size={20} color={colors.primary} />
+                <Icon name="zap" size={20} color={colors.primary} />
                 <Text style={[styles.lifetimeNum, { color: colors.text }]}>{overallStreak}</Text>
                 <Text style={[styles.lifetimeLabel, { color: colors.textMuted }]}>cur. streak</Text>
               </View>
               <View style={[styles.lifetimeStat, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Feather name="trending-up" size={20} color="#34D399" />
+                <Icon name="trending-up" size={20} color="#34D399" />
                 <Text style={[styles.lifetimeNum, { color: colors.text }]}>
                   {productiveDays > 0 ? Math.round((totalCompleted / productiveDays) * 10) / 10 : 0}
                 </Text>
@@ -492,7 +492,7 @@ export default function AnalysisTab({ date }: Props) {
             {totalMoods > 0 && (
               <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
                 <View style={styles.cardHeader}>
-                  <Feather name="heart" size={15} color="#F9A8D4" />
+                  <Icon name="heart" size={15} color="#F9A8D4" />
                   <Text style={[styles.cardTitle, { color: colors.text }]}>Lifetime Mood</Text>
                   <Text style={[styles.streakLabel, { color: colors.textMuted }]}>{totalMoods} entries</Text>
                 </View>

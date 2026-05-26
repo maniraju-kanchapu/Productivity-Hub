@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import Icon from '@/components/Icon';
 import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -54,7 +54,7 @@ export default function DayScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { paddingTop: insets.top + 8, borderBottomColor: colors.border }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} activeOpacity={0.7}>
-          <Feather name="chevron-left" size={24} color={colors.textSecondary} />
+          <Icon name="chevron-left" size={24} color={colors.textSecondary} />
         </TouchableOpacity>
         <View style={styles.headerTitle}>
           <Text style={[styles.weekday, { color: colors.textMuted }]}>{weekday}</Text>
@@ -97,8 +97,8 @@ export default function DayScreen() {
               activeOpacity={0.7}
             >
               <View style={[styles.tabIcon, active && { backgroundColor: colors.primaryDim }]}>
-                <Feather
-                  name={tab.icon as any}
+                <Icon
+                  name={tab.icon}
                   size={20}
                   color={active ? colors.primary : colors.textMuted}
                 />

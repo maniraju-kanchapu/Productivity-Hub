@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import Icon from '@/components/Icon';
 import * as Haptics from 'expo-haptics';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -81,7 +81,7 @@ function MoodButton({ mood, selected, onPress }: MoodButtonProps) {
               ]}
             />
           )}
-          <Feather name={mood.emoji as any} size={20} color={selected ? mood.color : 'rgba(255,255,255,0.3)'} />
+          <Icon name={mood.emoji as any} size={20} color={selected ? mood.color : 'rgba(255,255,255,0.3)'} />
         </View>
         <Text style={[styles.moodLabel, { color: selected ? mood.color : 'rgba(255,255,255,0.3)' }]}>
           {mood.label}
@@ -169,14 +169,14 @@ export default function JournalTab({ date }: Props) {
             activeOpacity={0.7}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Feather name="save" size={17} color={saved ? colors.textMuted : colors.primary} />
+            <Icon name="save" size={17} color={saved ? colors.textMuted : colors.primary} />
           </TouchableOpacity>
         </View>
       </View>
 
       {isFuture ? (
         <View style={styles.futureMsg}>
-          <Feather name="clock" size={32} color={colors.textMuted} />
+          <Icon name="clock" size={32} color={colors.textMuted} />
           <Text style={[styles.futureText, { color: colors.textSecondary }]}>This day hasn't arrived yet</Text>
         </View>
       ) : (

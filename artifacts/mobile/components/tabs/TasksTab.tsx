@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import Icon from '@/components/Icon';
 import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
 import {
@@ -45,7 +45,7 @@ function TaskRow({ task, onToggle, onDelete }: TaskRowProps) {
           activeOpacity={0.6}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          {task.completed && <Feather name="check" size={11} color={colors.primary} />}
+          {task.completed && <Icon name="check" size={11} color={colors.primary} />}
         </TouchableOpacity>
 
         <TouchableOpacity onPress={onToggle} style={styles.taskContent} activeOpacity={0.7}>
@@ -75,7 +75,7 @@ function TaskRow({ task, onToggle, onDelete }: TaskRowProps) {
             activeOpacity={0.6}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Feather name="trash-2" size={15} color={colors.textMuted} />
+            <Icon name="trash-2" size={15} color={colors.textMuted} />
           </TouchableOpacity>
         )}
       </View>
@@ -228,7 +228,7 @@ export default function TasksTab({ date }: Props) {
       >
         {sections.length === 0 ? (
           <View style={styles.empty}>
-            <Feather name="check-circle" size={36} color={colors.textMuted} />
+            <Icon name="check-circle" size={36} color={colors.textMuted} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No tasks yet</Text>
             <Text style={[styles.emptySubtext, { color: colors.textMuted }]}>Tap + to add a task for this day</Text>
           </View>
@@ -256,7 +256,7 @@ export default function TasksTab({ date }: Props) {
         style={[styles.fab, { backgroundColor: colors.primary }]}
         activeOpacity={0.85}
       >
-        <Feather name="plus" size={24} color={colors.primaryForeground} />
+        <Icon name="plus" size={24} color={colors.primaryForeground} />
       </TouchableOpacity>
 
       <AddTaskModal visible={showModal} date={date} onClose={() => setShowModal(false)} />

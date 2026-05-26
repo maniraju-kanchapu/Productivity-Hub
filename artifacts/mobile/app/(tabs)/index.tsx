@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import Icon from '@/components/Icon';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
@@ -55,7 +55,7 @@ export default function HomeScreen() {
         <View style={styles.headerRight}>
           {streak > 0 && (
             <View style={[styles.streakPill, { backgroundColor: colors.primaryDim, borderColor: colors.primaryGlow }]}>
-              <Feather name="zap" size={12} color={colors.primary} />
+              <Icon name="zap" size={12} color={colors.primary} />
               <Text style={[styles.streakText, { color: colors.primary }]}>{streak}</Text>
             </View>
           )}

@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import Icon from '@/components/Icon';
 import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
 import {
@@ -30,7 +30,7 @@ function SectionHeader({ title, action, onAction }: { title: string; action?: st
       <Text style={[styles.sectionTitle, { color: colors.textMuted }]}>{title}</Text>
       {action && onAction && (
         <TouchableOpacity onPress={onAction} activeOpacity={0.7} style={styles.sectionAction}>
-          <Feather name="plus" size={14} color={colors.primary} />
+          <Icon name="plus" size={14} color={colors.primary} />
           <Text style={[styles.sectionActionText, { color: colors.primary }]}>{action}</Text>
         </TouchableOpacity>
       )}
@@ -53,7 +53,7 @@ function SettingsRow({ icon, iconColor, label, value, onPress, rightContent, isL
   const inner = (
     <View style={[styles.settingsRow, !isLast && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border }]}>
       <View style={[styles.settingsIcon, { backgroundColor: (iconColor ?? colors.primary) + '1A' }]}>
-        <Feather name={icon as any} size={15} color={iconColor ?? colors.primary} />
+        <Icon name={icon as any} size={15} color={iconColor ?? colors.primary} />
       </View>
       <Text style={[styles.settingsLabel, { color: colors.text }]}>{label}</Text>
       {rightContent ?? (
@@ -62,7 +62,7 @@ function SettingsRow({ icon, iconColor, label, value, onPress, rightContent, isL
         ) : null
       )}
       {onPress && !rightContent && (
-        <Feather name="chevron-right" size={14} color={colors.textMuted} style={{ marginLeft: 4 }} />
+        <Icon name="chevron-right" size={14} color={colors.textMuted} style={{ marginLeft: 4 }} />
       )}
     </View>
   );
@@ -140,7 +140,7 @@ function HabitModal({ visible, habit, onClose }: HabitModalProps) {
                 />
                 {color === c && (
                   <View style={styles.colorCheck}>
-                    <Feather name="check" size={9} color="#fff" />
+                    <Icon name="check" size={9} color="#fff" />
                   </View>
                 )}
               </TouchableOpacity>
@@ -201,7 +201,7 @@ function HabitRowItem({ habit, onEdit, onDelete, onToggle, isLast }: HabitRowPro
           style={styles.iconBtn}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Feather name="edit-2" size={15} color={colors.textSecondary} />
+          <Icon name="edit-2" size={15} color={colors.textSecondary} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={onDelete}
@@ -209,7 +209,7 @@ function HabitRowItem({ habit, onEdit, onDelete, onToggle, isLast }: HabitRowPro
           style={styles.iconBtn}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Feather name="trash-2" size={15} color={colors.destructive} />
+          <Icon name="trash-2" size={15} color={colors.destructive} />
         </TouchableOpacity>
       </View>
     </View>
@@ -253,7 +253,7 @@ export default function SettingsTab() {
           style={[styles.emptyCard, { backgroundColor: colors.card, borderColor: colors.border }]}
         >
           <View style={[styles.emptyIconWrap, { backgroundColor: colors.primaryDim }]}>
-            <Feather name="repeat" size={22} color={colors.primary} />
+            <Icon name="repeat" size={22} color={colors.primary} />
           </View>
           <Text style={[styles.emptyTitle, { color: colors.text }]}>No habits yet</Text>
           <Text style={[styles.emptySub, { color: colors.textMuted }]}>

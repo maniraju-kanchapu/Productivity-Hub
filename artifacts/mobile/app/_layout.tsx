@@ -35,9 +35,6 @@ export default function RootLayout() {
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
-    // 'feather' must be lowercase — matches the internal fontFamily name in
-    // @expo/vector-icons/build/Feather.js: createIconSet(glyphMap, 'feather', font)
-    feather: require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Feather.ttf'),
   });
 
   useEffect(() => {
