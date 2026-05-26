@@ -1,0 +1,396 @@
+Build a FULLY FUNCTIONAL premium Android productivity application inspired by the attached dot-grid interface reference image.
+
+IMPORTANT:
+The uploaded image is the core inspiration for the app’s MAIN INTERFACE.
+
+The app should feel:
+
+* minimal
+* immersive
+* premium
+* calm
+* futuristic
+* iOS-inspired
+* smooth and elegant
+
+Target device:
+
+* Android
+* optimized for iQOO Z9
+* responsive for all Android screens
+
+Tech Requirements:
+
+* Build using React Native + Expo OR Flutter (choose the best optimized option)
+* Must run smoothly on Android
+* Lightweight
+* Fast animations
+* Offline-first architecture
+* Local database storage
+* Modern scalable architecture
+
+==================================================
+APP CONCEPT
+===========
+
+This app is a personal life operating system.
+
+It combines:
+
+* tasks
+* habits
+* journaling
+* daily tracking
+* productivity analytics
+* streak systems
+* life progression
+
+The ENTIRE app revolves around the dot-grid interface.
+
+==================================================
+MAIN HOME SCREEN (MOST IMPORTANT)
+=================================
+
+The main interface should ONLY contain a vertical dot-grid system similar to the reference image.
+
+NO traditional dashboard.
+
+NO cluttered cards.
+
+ONLY:
+
+* time/date at top
+* vertical dot grid
+* subtle UI
+* minimal controls
+
+---
+
+## DOT GRID SYSTEM
+
+The grid represents days in a year.
+
+Requirements:
+
+* 365 dots
+* vertically scrollable
+* elegant spacing
+* smooth animations
+* premium visual hierarchy
+
+Dot States:
+
+1. Current Day
+
+* highlighted green glowing dot
+* subtle pulse animation
+
+2. Completed Days
+
+* solid white dots
+
+3. Future Days
+
+* transparent/glass dots
+
+4. Missed Days
+
+* faded/dim dots
+
+Interactions:
+
+* tap a dot to open that day
+* smooth zoom transition
+* subtle scale animations
+* premium motion
+
+The grid should feel:
+
+* alive
+* meaningful
+* immersive
+* futuristic
+
+==================================================
+DAY DETAIL SCREEN
+=================
+
+When user taps a day dot:
+Open that specific day's workspace.
+
+This page contains:
+
+1. Tasks
+2. Journal
+3. Analysis
+4. Settings
+
+Navigation:
+Bottom floating navigation bar with 4 tabs.
+
+==================================================
+TAB 1 — TASKS
+=============
+
+This tab contains:
+
+* daily tasks
+* future tasks
+* completed tasks
+* recurring habits
+
+Requirements:
+
+* add task
+* edit task
+* delete task
+* mark completed
+* swipe interactions
+* smooth animations
+
+Task Categories:
+
+1. Daily Tasks
+2. Anytime Tasks
+3. Habits
+
+Habits:
+
+* automatically visible every day
+* recurring by default
+* streak tracking
+
+UI Requirements:
+
+* iOS-style clean cards
+* glassmorphism
+* green/white color palette
+* elegant typography
+* smooth transitions
+
+==================================================
+TAB 2 — JOURNAL
+===============
+
+Daily journal/diary system.
+
+Requirements:
+
+* write journal entries
+* save locally
+* clean distraction-free editor
+* auto-save
+* support long writing
+
+UI:
+
+* minimal
+* premium typography
+* soft glass effect
+* calm atmosphere
+
+Optional:
+
+* image attachments
+* scrapbook mode
+
+==================================================
+TAB 3 — ANALYSIS
+================
+
+This is the analytics dashboard.
+
+Requirements:
+
+* daily productivity score
+* streak tracking
+* task completion %
+* habit consistency
+* graphs and charts
+* numerical stats
+* visual progress systems
+
+The analytics must look:
+
+* artistic
+* futuristic
+* premium
+
+NOT corporate dashboards.
+
+Include:
+
+1. Daily stats
+2. Weekly stats
+3. Monthly stats
+4. Overall lifetime stats
+
+Filters:
+
+* particular habit stats
+* task category stats
+* date range stats
+* productivity trends
+
+Visualizations:
+
+* circular progress
+* line graphs
+* streak counters
+* heatmaps
+* growth charts
+
+==================================================
+TAB 4 — SETTINGS
+================
+
+Settings screen should contain:
+
+* manage habits
+* theme settings
+* notifications
+* app preferences
+* backup options
+* data management
+
+Habit Settings:
+
+* create habit
+* edit habit
+* delete habit
+* recurring schedule
+
+==================================================
+DESIGN SYSTEM
+=============
+
+STYLE:
+
+* iOS-inspired UI
+* premium Android feel
+* minimal futuristic design
+* clean spacing
+* immersive motion
+
+COLORS:
+Primary:
+
+* glass white
+* neon green
+* soft gray
+* transparent black overlays
+
+Theme:
+
+* clean dark aesthetic
+* smooth glow
+* subtle gradients
+* glassmorphism
+
+==================================================
+ANIMATIONS
+==========
+
+Requirements:
+
+* smooth 60fps animations
+* premium transitions
+* subtle glow pulses
+* smooth tab switching
+* elegant scrolling
+* micro-interactions
+
+Avoid:
+
+* cartoon animations
+* clutter
+* over-designed visuals
+
+==================================================
+TYPOGRAPHY
+==========
+
+Use:
+
+* SF Pro Display OR Inter
+
+Style:
+
+* clean
+* modern
+* highly readable
+* elegant spacing
+
+==================================================
+DATABASE
+========
+
+Use local offline storage.
+
+Requirements:
+
+* tasks persist after restart
+* journals persist
+* habits persist
+* analytics auto-calculate
+* fast performance
+
+==================================================
+CORE FUNCTIONALITY
+==================
+
+The app must FULLY WORK.
+
+Requirements:
+
+* real data persistence
+* dynamic streak calculations
+* real analytics
+* task CRUD
+* habit CRUD
+* journal CRUD
+* responsive UI updates
+* proper state management
+
+==================================================
+ARCHITECTURE
+============
+
+Use scalable clean architecture.
+
+Recommended:
+
+* feature-based folder structure
+* reusable components
+* modular design
+* optimized performance
+
+==================================================
+DELIVERABLES
+============
+
+Generate:
+
+1. Complete mobile app
+2. Fully functional UI
+3. Real task system
+4. Habit tracking system
+5. Journal system
+6. Analytics engine
+7. Streak calculations
+8. Dot-grid engine
+9. Settings system
+10. Smooth animations
+11. Persistent local storage
+12. Responsive Android experience
+
+IMPORTANT:
+The final result should feel like:
+
+* a premium App Store productivity app
+* minimalist life operating system
+* emotionally immersive
+* futuristic and calming
+* NOT a generic template app
+
+The dot-grid interface is the soul of the entire app.

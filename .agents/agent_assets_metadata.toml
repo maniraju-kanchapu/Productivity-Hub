@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "j4Kt5uQDTB2NINthZJYL0"
+uri = "file://artifacts/mobile/assets/images/icon.png"
+type = "image"
+title = "life-os-icon"
