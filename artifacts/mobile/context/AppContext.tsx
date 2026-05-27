@@ -41,6 +41,7 @@ interface AppState {
   habits: Habit[];
   journals: JournalEntry[];
   moods: Record<string, MoodType>;
+  profilePhoto: string | null;
   loaded: boolean;
 }
 
@@ -66,6 +67,7 @@ interface AppContextType extends AppState {
   getTotalTasksCompleted: () => number;
   getGoldDaysCount: () => number;
   getMoodTrend: () => { date: string; mood: MoodType | undefined }[];
+  setProfilePhoto: (uri: string | null) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -74,6 +76,7 @@ const TASKS_KEY = '@lifeos_tasks';
 const HABITS_KEY = '@lifeos_habits';
 const JOURNALS_KEY = '@lifeos_journals';
 const MOODS_KEY = '@lifeos_moods';
+const PROFILE_KEY = '@trace_profile';
 
 function generateId(): string {
   return Date.now().toString() + Math.random().toString(36).substr(2, 9);
@@ -99,6 +102,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     habits: [],
     journals: [],
     moods: {},
+    profilePhoto: null,
     loaded: false,
   });
 
@@ -108,17 +112,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   async function loadData() {
     try {
-      const [tasksRaw, habitsRaw, journalsRaw, moodsRaw] = await Promise.all([
+      const [tasksRaw, habitsRaw, journalsRaw, moodsRaw, profileRaw] = await Promise.all([
         AsyncStorage.getItem(TASKS_KEY),
         AsyncStorage.getItem(HABITS_KEY),
         AsyncStorage.getItem(JOURNALS_KEY),
         AsyncStorage.getItem(MOODS_KEY),
+        AsyncStorage.getItem(PROFILE_KEY),
       ]);
       setState({
         tasks: tasksRaw ? JSON.parse(tasksRaw) : [],
         habits: habitsRaw ? JSON.parse(habitsRaw) : [],
         journals: journalsRaw ? JSON.parse(journalsRaw) : [],
         moods: moodsRaw ? JSON.parse(moodsRaw) : {},
+        profilePhoto: profileRaw ?? null,
         loaded: true,
       });
     } catch {
@@ -363,6 +369,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
   }, [state.moods]);
 
+  function setProfilePhoto(uri: string | null) {
+    setState(s => ({ ...s, profilePhoto: uri }));
+    if (uri) {
+      AsyncStorage.setItem(PROFILE_KEY, uri);
+    } else {
+      AsyncStorage.removeItem(PROFILE_KEY);
+    }
+  }
+
   return (
     <AppContext.Provider value={{
       ...state,
@@ -374,6 +389,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       getHabitStreak, getOverallStreak,
       getWeeklyCompletion, getMonthlyStats,
       getTotalTasksCompleted, getGoldDaysCount, getMoodTrend,
+      setProfilePhoto,
     }}>
       {children}
     </AppContext.Provider>

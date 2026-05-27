@@ -1,25 +1,27 @@
 {
   "expo": {
-    "name": "Life OS",
-    "slug": "mobile",
+    "name": "Trace",
+    "slug": "trace",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mobile",
+    "scheme": "trace",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/icon.png",
-      "resizeMode": "contain",
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover",
       "backgroundColor": "#0A0A0F"
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.lifeos.app"
+      "bundleIdentifier": "com.trace.app",
+      "userInterfaceStyle": "automatic"
     },
     "android": {
       "backgroundColor": "#0A0A0F",
-      "statusBarColor": "#0A0A0F"
+      "statusBarColor": "#0A0A0F",
+      "userInterfaceStyle": "automatic"
     },
     "web": {
       "favicon": "./assets/images/icon.png"

@@ -6,3 +6,15 @@ id = "j4Kt5uQDTB2NINthZJYL0"
 uri = "file://artifacts/mobile/assets/images/icon.png"
 type = "image"
 title = "life-os-icon"
+
+[[generated]]
+id = "SPnAd1v8_qzDk2fYiTpOK"
+uri = "file://attached_assets/generated_images/minimal_dark_splash_screen_baf2.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "qoL1k61BJ7RcKuDsoVn-a"
+uri = "file://attached_assets/generated_images/minimal_app_icon_for_f286.png"
+type = "image"
+title = "generated_image"
